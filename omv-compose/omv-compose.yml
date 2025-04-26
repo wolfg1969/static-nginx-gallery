@@ -1,0 +1,19 @@
+services:
+  gallery:
+    container_name: static-nginx-gallery
+    build: CHANGE_TO_COMPOSE_DATA_PATH/static-nginx-gallery
+    ports:
+      - "8080:80"
+    environment:
+      - PUID=<uid>
+      - PGID=<gid>
+      - UMASK=002
+      - TZ=Asia/Shanghai
+    volumes:
+      - CHANGE_TO_COMPOSE_DATA_PATH/static-nginx-gallery/app:/app
+      - CHANGE_TO_COMPOSE_DATA_PATH/static-nginx-gallery/temp:/app/temp # SKIP_BACKUP
+      - CHANGE_TO_COMPOSE_DATA_PATH/static-nginx-gallery/cache:/cache # SKIP_BACKUP
+      - CHANGE_TO_COMPOSE_DATA_PATH/static-nginx-gallery/conf/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
+      - CHANGE_TO_COMPOSE_DATA_PATH/static-nginx-gallery/conf/static-nginx-gallery:/usr/local/openresty/nginx/conf/static-nginx-gallery
+      
+      - /path/to/gallery:/gallery # SKIP_BACKUP

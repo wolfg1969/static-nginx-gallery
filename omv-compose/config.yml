@@ -1,0 +1,23 @@
+# = required =
+nginxConfDir: /conf
+nginxAppDir: /app
+serverName: gallery
+galleryDir: /gallery
+
+# = optional =
+path: null # /path/
+port: null # null = use default - 80 for HTTP, 443 for HTTPS
+thumbnails: /cache # bool - yes/no or string with cache directory
+videoThumbnails: /cache # or string with cache directory
+lightTheme: false # bool - yes/no
+title: 'Gallery' # <h1> and <title>
+favicon: false # or string with a path to custom favicon (in PNG format)
+subtitles:
+  convertSrtToVtt: false
+ssl: false
+  #certificate: '' # required if ssl is set
+  #certificateKey: '' # required if ssl is set
+  #redirectHttpToHttps: true # bool - yes/no
+  #httpPort: 80 # HTTP port to redirect to HTTPS or for Let's encrypt (if Let's encrypt is used, must be 80)
+  #letsEncrypt: false # or string with a path to directory to store ACME challenge
+httpAuth: false # or string with htpasswd auth file

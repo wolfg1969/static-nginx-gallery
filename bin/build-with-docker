@@ -1,0 +1,19 @@
+#!/bin/sh
+PROJECT_PATH="$(dirname $(dirname $(realpath "$0")))"
+# echo $PROJECT_PATH
+echo "Running npm install..."
+docker run --rm  -v ${PROJECT_PATH}:/app \
+    -u $(id -u ${USER}):$(id -g ${USER}) \
+    -w /app \
+    --entrypoint /usr/bin/npm \
+    static-nginx-gallery:latest install
+#node ${0%/*}/../src/cli.mjs $@
+echo "Generating nginx configuration and app files..."
+docker run --rm -v ${PROJECT_PATH}:/source \
+    -v ${PROJECT_PATH}/omv-compose/app:/app \
+    -v ${PROJECT_PATH}/omv-compose/conf:/conf \
+    -v ${PROJECT_PATH}/omv-compose/cache:/cache \
+    -u $(id -u ${USER}):$(id -g ${USER}) \
+    -w /source \
+    --entrypoint node \
+    static-nginx-gallery:latest /source/src/cli.mjs /source/omv-compose/config.yml

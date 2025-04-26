@@ -53,18 +53,18 @@ const customLightboxHTML = `
     	<div class="goverlay"></div>
     	<div class="gcontainer">
     		<div id="glightbox-slider" class="gslider"></div>
-    		<button class="gnext gbtn" tabindex="0" aria-label="Next">{nextSVG}</button>
-    		<button class="gprev gbtn" tabindex="1" aria-label="Previous">{prevSVG}</button>
+    		<button class="gnext gbtn" tabindex="0" title="Next">{nextSVG}</button>
+    		<button class="gprev gbtn" tabindex="1" title="Previous">{prevSVG}</button>
     		<div class="sng-buttons">
-				<a id="sng-exif" class="sng-button hidden" tabindex="9" aria-label="Show exif info">${exifSvg}</a>
-				<a id="sng-map" class="sng-button hidden" tabindex="8" aria-label="Show on map">${mapSvg}</a>
-				<a id="sng-photo360" class="sng-button hidden" tabindex="7" aria-label="Show photoshere">${photo360Svg}</a>
-				<a id="sng-share" class="sng-button" tabindex="6" data-position="4" aria-label="Share">${shareSvg}</a>
-				<a id="sng-open" class="sng-button" tabindex="5" data-position="3" aria-label="Open original in new tab" target="_blank">${openSvg}</a>
-				<a id="sng-download" class="sng-button" tabindex="4" data-position="2" aria-label="Download" download>${downloadSvg}</a>
-				<a id="sng-copy" class="sng-button" tabindex="3" data-position="1" aria-label="Copy URL to clipboard" download>${copySvg}</a>
+				<a id="sng-exif" class="sng-button hidden" tabindex="9" title="Show exif info">${exifSvg}</a>
+				<a id="sng-map" class="sng-button hidden" tabindex="8" title="Show on map">${mapSvg}</a>
+				<a id="sng-photo360" class="sng-button hidden" tabindex="7" title="Show photoshere">${photo360Svg}</a>
+				<a id="sng-share" class="sng-button hidden" tabindex="6" data-position="4" title="Share">${shareSvg}</a>
+				<a id="sng-open" class="sng-button" tabindex="5" data-position="3" title="Open original in new tab" target="_blank">${openSvg}</a>
+				<a id="sng-download" class="sng-button" tabindex="4" data-position="2" title="Download" download>${downloadSvg}</a>
+				<a id="sng-copy" class="sng-button" tabindex="3" data-position="1" title="Copy URL to clipboard" download>${copySvg}</a>
 			</div>
-    		<button class="gclose gbtn" tabindex="2" aria-label="Close">${closeSvg}</button>
+    		<button class="gclose gbtn" tabindex="2" title="Close">${closeSvg}</button>
 		</div>
 
 		<div id="sng-exif-box-container">
@@ -206,7 +206,16 @@ lightbox.on('open', () => {
 	copyButton = document.getElementById('sng-copy');
 	copyButton.addEventListener('click', (event) => {
 		event.stopPropagation();
-
+		// on non-https site, "navigator.clipboard" is undefined
+		if (typeof navigator.clipboard === 'undefined') {
+			tippy(copyButton, {
+					trigger:'manual',
+					appendTo: document.body,
+					zIndex: 999999,
+					content: 'Clipboard API not available',
+			}).show();
+			return;
+		}
 		navigator.clipboard.writeText(window.location.toString())
 			.then(() => {
 				copyButton.innerHTML = copySvgDone;
@@ -396,13 +405,17 @@ lightbox.on('slide_changed', ({ current }) => {
 
 			if (data.exif) {
 				Object.entries(data.exif).forEach(([key, value]) => {
-					info[key] = value.toString();
+					if (typeof value !== 'undefined') {
+						info[key] = value.toString();
+					}
 				});
 			}
 
 			if (data.ifd0) {
 				Object.entries(data.ifd0).forEach(([key, value]) => {
-					info[key] = value.toString();
+					if (typeof value !== 'undefined') {
+						info[key] = value.toString();
+					}
 				});
 			}
 
@@ -412,7 +425,9 @@ lightbox.on('slide_changed', ({ current }) => {
 				mapButton.classList.remove('hidden');
 
 				Object.entries(data.gps).forEach(([key, value]) => {
-					gps[key] = value.toString();
+					if (typeof value !== 'undefined') {
+						info[key] = value.toString();
+					}
 				});
 			}
 
