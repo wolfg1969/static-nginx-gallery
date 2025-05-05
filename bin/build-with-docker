@@ -5,6 +5,7 @@ echo "Running npm install..."
 docker run --rm  -v ${PROJECT_PATH}:/app \
     -u $(id -u ${USER}):$(id -g ${USER}) \
     -w /app \
+    -e NPM_CONFIG_CACHE=/app/.npm-cache-docker/ \
     --entrypoint /usr/bin/npm \
     static-nginx-gallery:latest install
 #node ${0%/*}/../src/cli.mjs $@

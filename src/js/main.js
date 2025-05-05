@@ -403,6 +403,8 @@ lightbox.on('slide_changed', ({ current }) => {
 			const info = {};
 			const gps = {};
 
+			// console.log(data);
+
 			if (data.exif) {
 				Object.entries(data.exif).forEach(([key, value]) => {
 					if (typeof value !== 'undefined') {
@@ -414,7 +416,13 @@ lightbox.on('slide_changed', ({ current }) => {
 			if (data.ifd0) {
 				Object.entries(data.ifd0).forEach(([key, value]) => {
 					if (typeof value !== 'undefined') {
-						info[key] = value.toString();
+						if (key === 'XPKeywords' && data.digiKam) {
+							info[key] = data.digiKam.TagsList.reduce((longest, current) => {
+								return current.length > longest.length ? current : longest;
+							}, '');
+						} else {
+							info[key] = value.toString();
+						}
 					}
 				});
 			}
@@ -431,7 +439,8 @@ lightbox.on('slide_changed', ({ current }) => {
 				});
 			}
 
-			if (info !== {} || gps !== {}) {
+			if (Object.getOwnPropertyNames(info).length !== 0 || 
+				Object.getOwnPropertyNames(gps).length !== 0) {
 				updateExif(info, gps);
 				exifButton.classList.remove('hidden');
 			}
